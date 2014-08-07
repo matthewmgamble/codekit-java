@@ -92,6 +92,24 @@ public class SpeechService extends APIService {
      */
     public SpeechResponse speechToText(File audio, String xArgs, 
             String speechContext, String subContext) throws RESTException {
+        
+        return speechToText(audio, null,  xArgs, speechContext,  subContext );
+    }
+    /**
+     * Sends the request to the server.
+     *
+     * @param audio audio file to convert to text
+     * @param mimeType for audio file (null for auto-detection)
+     * @param xArgs Special information about the request 
+     * @param speechContext additional context information about the audio
+     * @param subContext speechContext additional information
+     *
+     * @return SpeechResponse object
+     * @throws RESTException
+     * @see SpeechResponse
+     */
+    public SpeechResponse speechToText(File audio, String mimeType, String xArgs, 
+            String speechContext, String subContext ) throws RESTException {
         final String endpoint = getFQDN() + "/speech/v3/speechToText";
 
         RESTClient restClient = new RESTClient(endpoint)
@@ -108,7 +126,9 @@ public class SpeechService extends APIService {
                 && speechContext.equals("Gaming")) {
             restClient.addHeader("X-SpeechSubContext", subContext);
         }
-        APIResponse apiResponse = restClient.httpPost(audio);
+       
+            APIResponse apiResponse = restClient.httpPost(audio, mimeType);
+ 
         try {
             return SpeechResponse.valueOf(
                     new JSONObject(apiResponse.getResponseBody()));

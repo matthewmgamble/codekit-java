@@ -4,7 +4,7 @@
 
   <groupId>com.att.api</groupId>
   <artifactId>codekit</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>codekit</name>

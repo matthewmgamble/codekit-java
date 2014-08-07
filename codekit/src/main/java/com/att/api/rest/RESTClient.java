@@ -558,6 +558,21 @@ public class RESTClient {
         }
     }
 
+        /**
+     * Sends an http POST request with the POST body set to the file.
+     *
+     * <p>
+     * <strong>NOTE</strong>: Any parameters set using
+     * <code>addParameter()</code> or <code>setParameter()</code> will be
+     * ignored.
+     * </p>
+     *
+     * @param file file to use as POST body@return api response
+     * @throws RESTException if POST was unsuccessful
+     */
+    public APIResponse httpPost(File file) throws RESTException {
+        return httpPost(file, null);
+    }
     /**
      * Sends an http POST request with the POST body set to the file.
      *
@@ -568,20 +583,23 @@ public class RESTClient {
      * </p>
      *
      * @param file file to use as POST body
+     * @param mimeType mime type to use with the file (null for auto-detection)
      * @return api response
      * @throws RESTException if POST was unsuccessful
      */
-    public APIResponse httpPost(File file) throws RESTException {
+    public APIResponse httpPost(File file, String mimeType) throws RESTException {
         HttpResponse response = null;
         try {
             HttpClient httpClient = createClient();
 
             HttpPost httpPost = new HttpPost(url);
             addInternalHeaders(httpPost);
+            if (mimeType == null) { 
+                   // detect the mime type
+                mimeType  = this.getMIMEType(file);
+            } 
 
-            String contentType = this.getMIMEType(file);
-
-            httpPost.setEntity(new FileEntity(file, contentType));
+            httpPost.setEntity(new FileEntity(file, mimeType));
 
             return buildResponse(httpClient.execute(httpPost));
         } catch (Exception e) {
@@ -673,6 +691,7 @@ public class RESTClient {
                     contentType = "audio/amr";
                 }
             }
+
         } catch (IOException ioe) {
             throw ioe; // pass along exception
         } finally {
